@@ -63,6 +63,61 @@
                 }
             });
         })();
+        // ACCORDION SIDEBAR
+const accordionButtons = document.querySelectorAll('.sidebar-group-title');
+
+accordionButtons.forEach((button) => {
+
+    button.addEventListener('click', () => {
+
+        const targetId = button.getAttribute('data-target');
+        const submenu = document.getElementById(targetId);
+
+        // toggle submenu
+        submenu.classList.toggle('show');
+
+        // toggle icon rotate
+        button.classList.toggle('open');
+    });
+
+});
+/* =========================
+   LOGOUT CONFIRM
+========================= */
+
+const btnLogout = document.getElementById('btn-logout');
+const logoutAlert = document.getElementById('logoutAlert');
+const logoutOverlay = document.getElementById('logoutOverlay');
+const cancelLogout = document.getElementById('cancelLogout');
+const confirmLogout = document.getElementById('confirmLogout');
+
+const openLogoutAlert = () => {
+    logoutAlert.classList.add('show');
+    logoutOverlay.classList.add('show');
+};
+
+const closeLogoutAlert = () => {
+    logoutAlert.classList.remove('show');
+    logoutOverlay.classList.remove('show');
+};
+
+if (btnLogout) {
+    btnLogout.addEventListener('click', openLogoutAlert);
+}
+
+if (cancelLogout) {
+    cancelLogout.addEventListener('click', closeLogoutAlert);
+}
+
+if (logoutOverlay) {
+    logoutOverlay.addEventListener('click', closeLogoutAlert);
+}
+
+if (confirmLogout) {
+    confirmLogout.addEventListener('click', () => {
+        window.location.href = 'index.php?route=logout';
+    });
+}
     </script>
 </body>
 </html>

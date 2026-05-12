@@ -54,3 +54,6 @@ Akun default akan dibuat otomatis saat aplikasi pertama kali dijalankan jika tab
 - Nilai peringatan stok minimum diatur di konstanta `STOCK_MINIMUM_ALERT` pada [config.php]
 - Manager hanya bisa melihat data dashboard, master data, transaksi, dan laporan tanpa akses CRUD.
 - Laporan menggunakan print page browser agar mudah dipakai di lingkungan lokal.
+
+
+RAIHAN SAMA DANDAG

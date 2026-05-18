@@ -113,7 +113,7 @@ $role = $_SESSION['user']['role'] ?? 'User';
 
     <button type="button" class="logout-button" id="btn-logout">
     <i class="bi bi-box-arrow-left"></i>
-    Keluar
+    Logout
 </button>
 <!-- Overlay -->
 <div class="logout-overlay" id="logoutOverlay"></div>
@@ -133,7 +133,7 @@ $role = $_SESSION['user']['role'] ?? 'User';
 
     <div class="logout-actions">
         <button type="button" class="btn btn-secondary" id="cancelLogout">
-            Kembali
+            Cencel
         </button>
 
         <button type="button" class="btn btn-danger" id="confirmLogout">

@@ -17,7 +17,7 @@ $productSearchItems = array_map(static function (array $product) use ($showStock
         'id' => (int) $product['id_barang'],
         'code' => (string) $product['kode_barang'],
         'name' => (string) $product['nama_barang'],
-        'meta' => implode(' · ', array_filter($meta)),
+        'meta' => implode(' - ', array_filter($meta)),
         'search' => strtolower(implode(' ', [
             $product['kode_barang'] ?? '',
             $product['nama_barang'] ?? '',
@@ -28,12 +28,11 @@ $productSearchItems = array_map(static function (array $product) use ($showStock
 }, $products);
 ?>
 <div class="modal-field full product-search-field" data-product-search>
-    <label for="productSearchInput">Barang</label>
+    <label>Barang</label>
     <input type="hidden" name="id_barang" data-product-id>
     <div class="product-search-box">
         <i class="bi bi-search"></i>
         <input
-            id="productSearchInput"
             type="search"
             class="app-input product-search-input"
             placeholder="Cari kode, nama, kategori, atau supplier barang..."
@@ -49,7 +48,8 @@ $productSearchItems = array_map(static function (array $product) use ($showStock
 
 <script>
 (() => {
-    const root = document.querySelector('[data-product-search]');
+    const form = document.currentScript.closest('form');
+    const root = form ? form.querySelector('[data-product-search]') : null;
     if (!root) {
         return;
     }
@@ -60,7 +60,6 @@ $productSearchItems = array_map(static function (array $product) use ($showStock
     const results = root.querySelector('[data-product-results]');
     const selected = root.querySelector('[data-product-selected]');
     const empty = root.querySelector('[data-product-empty]');
-    const form = root.closest('form');
 
     const clearSelection = () => {
         idInput.value = '';
@@ -149,17 +148,15 @@ $productSearchItems = array_map(static function (array $product) use ($showStock
         }
     });
 
-    if (form) {
-        form.addEventListener('submit', (event) => {
-            if (idInput.value) {
-                return;
-            }
+    form.addEventListener('submit', (event) => {
+        if (idInput.value) {
+            return;
+        }
 
-            event.preventDefault();
-            queryInput.setCustomValidity('Pilih barang dari hasil pencarian.');
-            queryInput.reportValidity();
-            queryInput.setCustomValidity('');
-        });
-    }
+        event.preventDefault();
+        queryInput.setCustomValidity('Pilih barang dari hasil pencarian.');
+        queryInput.reportValidity();
+        queryInput.setCustomValidity('');
+    });
 })();
 </script>

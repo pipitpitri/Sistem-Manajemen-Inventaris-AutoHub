@@ -21,7 +21,7 @@
         <button class="btn btn-green">Tampilkan</button>
     </form>
     <?php if (is_admin()): ?>
-        <a href="<?= e(route('barang-keluar/tambah')) ?>" class="btn btn-green">+ Input Barang Keluar</a>
+        <a href="<?= e(route('barang-keluar/tambah')) ?>" class="btn btn-green" data-modal-target="outgoing-create-modal">+ Input Barang Keluar</a>
     <?php endif; ?>
 </section>
 
@@ -55,3 +55,14 @@
         </tbody>
     </table>
 </section>
+
+<?php if (is_admin()): ?>
+    <?php
+    $modalId = 'outgoing-create-modal';
+    $modalHidden = true;
+    $modalTitle = 'Input Barang Keluar';
+    $action = 'barang-keluar/simpan';
+    $cancelRoute = 'barang-keluar';
+    require __DIR__ . '/form.php';
+    ?>
+<?php endif; ?>

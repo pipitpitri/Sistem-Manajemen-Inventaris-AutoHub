@@ -1,3 +1,16 @@
+<?php
+/** @var array $rows */
+/** @var string $selectedType */
+/** @var int $selectedMonth */
+/** @var int $selectedYear */
+/** @var string|null $selectedCategory */
+/** @var array $categories */
+/** @var array $years */
+/** @var string $heading */
+/** @var string $periodLabel */
+/** @var string $categoryLabel */
+/** @var float $totalSubtotal */
+?>
 <form method="get" action="index.php" class="report-filter-layout" id="reportFilterForm">
     <input type="hidden" name="route" value="reports">
 

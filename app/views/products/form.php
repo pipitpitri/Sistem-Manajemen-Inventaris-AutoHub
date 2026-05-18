@@ -1,8 +1,17 @@
-<div class="modal-page-overlay">
+<?php
+$modalId = $modalId ?? null;
+$modalHidden = $modalHidden ?? false;
+/** @var array|null $product */
+/** @var string $action */
+/** @var string|null $modalTitle */
+/** @var string|null $cancelRoute */
+/** @var array $suppliers */
+?>
+<div class="modal-page-overlay"<?= $modalId ? ' id="' . e($modalId) . '"' : '' ?><?= $modalHidden ? ' hidden' : '' ?>>
     <div class="modal-form-card modal-form-product">
         <div class="modal-form-header">
             <h2><?= e($modalTitle ?? 'Form Barang') ?></h2>
-            <a href="<?= e(route($cancelRoute ?? 'products')) ?>" class="modal-close-btn" aria-label="Tutup">
+            <a href="<?= e(route($cancelRoute ?? 'products')) ?>" class="modal-close-btn" aria-label="Tutup" data-modal-close>
                 <i class="bi bi-x-circle"></i>
             </a>
         </div>
@@ -11,7 +20,7 @@
         $selectedCategory = $product['kategori'] ?? old('kategori');
         $isEdit = !empty($product);
         ?>
-        <form method="post" action="<?= e(route($action)) ?>">
+        <form method="post" action="<?= e(route($action)) ?>" data-product-code-form>
             <div class="modal-form-body">
                 <div class="modal-field">
                     <label>Kode Barang</label>
@@ -69,7 +78,7 @@
             </div>
 
             <div class="modal-form-footer">
-                <a href="<?= e(route($cancelRoute ?? 'products')) ?>" class="btn-modal-secondary">Batal</a>
+                <a href="<?= e(route($cancelRoute ?? 'products')) ?>" class="btn-modal-secondary" data-modal-close>Batal</a>
                 <button class="btn-modal-primary"><i class="bi bi-check-lg me-2"></i>Simpan</button>
             </div>
         </form>
@@ -82,8 +91,11 @@
     const originalCategory = <?= json_encode($product['kategori'] ?? '', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     const originalCode = <?= json_encode($product['kode_barang'] ?? '', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
     const isEdit = <?= $isEdit ? 'true' : 'false' ?>;
-    const categorySelect = document.querySelector('[data-category-select]');
-    const codeInput = document.querySelector('[data-code-input]');
+    const modalId = <?= json_encode($modalId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+    const root = modalId ? document.getElementById(modalId) : document.currentScript.previousElementSibling;
+    const form = root ? root.querySelector('[data-product-code-form]') : null;
+    const categorySelect = form ? form.querySelector('[data-category-select]') : null;
+    const codeInput = form ? form.querySelector('[data-code-input]') : null;
 
     if (!categorySelect || !codeInput) {
         return;

@@ -1,3 +1,7 @@
+<?php
+/** @var array $products */
+/** @var string $keyword */
+?>
 <section class="toolbar-row">
     <form method="get" action="index.php" class="search-form">
         <input type="hidden" name="route" value="stock">

@@ -15,19 +15,16 @@ class ProductController extends BaseController
     {
         $this->authRequired();
         $keyword = trim($_GET['q'] ?? '');
-        $month = (int) ($_GET['month'] ?? date('n'));
-        $year = (int) ($_GET['year'] ?? date('Y'));
         $category = trim($_GET['category'] ?? '');
 
         $this->render('products/index', [
             'title' => 'Data Barang',
             'keyword' => $keyword,
             'selectedCategory' => $category,
-            'selectedMonth' => $month,
-            'selectedYear' => $year,
-            'years' => range((int) date('Y') - 4, (int) date('Y') + 1),
             'categories' => ['Sparepart', 'Oli', 'Ban'],
-            'products' => $this->productModel->all($keyword, $month, $year, $category ?: null),
+            'products' => $this->productModel->all($keyword, null, null, $category ?: null),
+            'suppliers' => $this->supplierModel->all(),
+            'nextCodes' => $this->productModel->nextCodesByCategory(),
         ]);
     }
 

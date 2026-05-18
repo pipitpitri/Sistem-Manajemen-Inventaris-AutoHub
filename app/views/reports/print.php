@@ -1,3 +1,13 @@
+<?php
+/** @var string $title */
+/** @var string $periodLabel */
+/** @var string $categoryLabel */
+/** @var string $printedAt */
+/** @var array $columns */
+/** @var array $tableRows */
+/** @var string $type */
+/** @var float $totalSubtotal */
+?>
 <div class="print-toolbar no-print">
     <button class="btn btn-outline-secondary" onclick="window.print()">Print</button>
 </div>

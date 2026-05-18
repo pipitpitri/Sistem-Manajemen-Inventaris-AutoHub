@@ -1,3 +1,7 @@
+<?php
+/** @var array $suppliers */
+/** @var string $keyword */
+?>
 <section class="toolbar-row between">
     <form method="get" action="index.php" class="search-form">
         <input type="hidden" name="route" value="suppliers">
@@ -5,7 +9,7 @@
         <input type="text" name="q" value="<?= e($keyword) ?>" placeholder="Cari nama, telepon, alamat, atau email supplier...">
     </form>
     <?php if (is_admin()): ?>
-        <a href="<?= e(route('suppliers/create')) ?>" class="btn btn-green">+ Tambah Supplier</a>
+        <a href="<?= e(route('suppliers/create')) ?>" class="btn btn-green" data-modal-target="supplier-create-modal">+ Tambah Supplier</a>
     <?php endif; ?>
 </section>
 
@@ -29,7 +33,7 @@
                     <td><?= e($supplier['alamat']) ?></td>
                     <?php if (is_admin()): ?>
                         <td class="action-cell">
-                            <a href="<?= e(route('suppliers/edit') . '&id=' . $supplier['id_supplier']) ?>" class="icon-btn warning"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="<?= e(route('suppliers/edit') . '&id=' . $supplier['id_supplier']) ?>" class="icon-btn warning" data-modal-target="supplier-edit-modal-<?= e((string) $supplier['id_supplier']) ?>"><i class="bi bi-pencil-fill"></i></a>
                             <a href="<?= e(route('suppliers/delete') . '&id=' . $supplier['id_supplier']) ?>" class="icon-btn danger" onclick="return confirm('Hapus data supplier ini?')"><i class="bi bi-trash-fill"></i></a>
                         </td>
                     <?php endif; ?>
@@ -38,3 +42,25 @@
         </tbody>
     </table>
 </section>
+
+<?php if (is_admin()): ?>
+    <?php
+    $modalId = 'supplier-create-modal';
+    $modalHidden = true;
+    $modalTitle = 'Tambah Supplier';
+    $supplier = null;
+    $action = 'suppliers/store';
+    $cancelRoute = 'suppliers';
+    require __DIR__ . '/form.php';
+
+    foreach ($suppliers as $modalSupplier) {
+        $modalId = 'supplier-edit-modal-' . $modalSupplier['id_supplier'];
+        $modalHidden = true;
+        $modalTitle = 'Edit Supplier';
+        $supplier = $modalSupplier;
+        $action = 'suppliers/update&id=' . $modalSupplier['id_supplier'];
+        $cancelRoute = 'suppliers';
+        require __DIR__ . '/form.php';
+    }
+    ?>
+<?php endif; ?>

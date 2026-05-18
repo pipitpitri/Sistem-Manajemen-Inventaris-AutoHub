@@ -1,8 +1,12 @@
-<div class="modal-page-overlay">
+<?php
+$modalId = $modalId ?? null;
+$modalHidden = $modalHidden ?? false;
+?>
+<div class="modal-page-overlay"<?= $modalId ? ' id="' . e($modalId) . '"' : '' ?><?= $modalHidden ? ' hidden' : '' ?>>
     <div class="modal-form-card">
         <div class="modal-form-header">
             <h2><?= e($modalTitle ?? 'Form Supplier') ?></h2>
-            <a href="<?= e(route($cancelRoute ?? 'suppliers')) ?>" class="modal-close-btn" aria-label="Tutup">
+            <a href="<?= e(route($cancelRoute ?? 'suppliers')) ?>" class="modal-close-btn" aria-label="Tutup" data-modal-close>
                 <i class="bi bi-x-circle"></i>
             </a>
         </div>
@@ -26,7 +30,7 @@
             </div>
 
             <div class="modal-form-footer">
-                <a href="<?= e(route($cancelRoute ?? 'suppliers')) ?>" class="btn-modal-secondary">Batal</a>
+                <a href="<?= e(route($cancelRoute ?? 'suppliers')) ?>" class="btn-modal-secondary" data-modal-close>Batal</a>
                 <button class="btn-modal-primary"><i class="bi bi-check-lg me-2"></i>Simpan</button>
             </div>
         </form>

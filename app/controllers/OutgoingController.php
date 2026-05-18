@@ -23,6 +23,7 @@ class OutgoingController extends BaseController
             'selectedYear' => $year,
             'years' => range((int) date('Y') - 4, (int) date('Y') + 1),
             'transactions' => $this->outgoingModel->all($month ?: null, $year ?: null),
+            'products' => $this->productModel->all(),
         ]);
     }
 

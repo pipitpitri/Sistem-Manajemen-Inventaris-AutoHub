@@ -118,6 +118,87 @@ if (confirmLogout) {
         window.location.href = 'index.php?route=logout';
     });
 }
+
+/* =========================
+   PAGE MODALS
+========================= */
+
+const openPageModal = (modal) => {
+    if (!modal) {
+        return;
+    }
+
+    document.querySelectorAll('.modal-page-overlay:not([hidden])').forEach((openModal) => {
+        if (openModal !== modal) {
+            openModal.hidden = true;
+        }
+    });
+
+    modal.hidden = false;
+    document.body.classList.add('app-modal-open');
+
+    const firstField = modal.querySelector('input, select, textarea, button, a');
+    if (firstField) {
+        firstField.focus({ preventScroll: true });
+    }
+};
+
+const closePageModal = (modal) => {
+    if (!modal) {
+        return;
+    }
+
+    modal.hidden = true;
+
+    if (!document.querySelector('.modal-page-overlay:not([hidden])')) {
+        document.body.classList.remove('app-modal-open');
+    }
+};
+
+document.querySelectorAll('[data-modal-target]').forEach((trigger) => {
+    trigger.addEventListener('click', (event) => {
+        const modal = document.getElementById(trigger.dataset.modalTarget);
+
+        if (!modal) {
+            return;
+        }
+
+        event.preventDefault();
+        openPageModal(modal);
+    });
+});
+
+document.querySelectorAll('[data-modal-close]').forEach((trigger) => {
+    trigger.addEventListener('click', (event) => {
+        const modal = trigger.closest('.modal-page-overlay');
+
+        if (!modal) {
+            return;
+        }
+
+        event.preventDefault();
+        closePageModal(modal);
+    });
+});
+
+document.querySelectorAll('.modal-page-overlay').forEach((modal) => {
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closePageModal(modal);
+        }
+    });
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') {
+        return;
+    }
+
+    const modal = document.querySelector('.modal-page-overlay:not([hidden])');
+    if (modal) {
+        closePageModal(modal);
+    }
+});
     </script>
 </body>
 </html>

@@ -29,10 +29,25 @@
                     <td><?= e($product['kategori']) ?></td>
                     <td><?= e((string) $product['stok']) ?></td>
                     <td>
-                        <span class="status-pill <?= (int) $product['stok'] < STOCK_MINIMUM_ALERT ? 'low' : 'safe' ?>">
-                            <?= (int) $product['stok'] < STOCK_MINIMUM_ALERT ? 'Menipis' : 'Aman' ?>
-                        </span>
-                    </td>
+    <?php
+        $stok = (int) $product['stok'];
+
+        if ($stok <= 0) {
+            $statusClass = 'empty';
+            $statusText = 'Habis';
+        } elseif ($stok < STOCK_MINIMUM_ALERT) {
+            $statusClass = 'low';
+            $statusText = 'Menipis';
+        } else {
+            $statusClass = 'safe';
+            $statusText = 'Aman';
+        }
+    ?>
+
+    <span class="status-pill <?= $statusClass ?>">
+        <?= $statusText ?>
+    </span>
+</td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

@@ -645,7 +645,7 @@ body {
 }
 
 .app-table {
-    margin: 0;
+    margin: 0; 
     min-width: 720px;
 }
 
@@ -653,7 +653,7 @@ body {
     background: #d9d9d9;
     color: #141414;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0,95rem;
     font-weight: 700;
     border-color: #bcbcbc;
     white-space: nowrap;
@@ -663,6 +663,7 @@ body {
     border-color: #d4d4d4;
     min-height: 54px;
     height: 54px;
+    font-size: 0,95rem;
     vertical-align: middle;
 }
 
@@ -703,11 +704,15 @@ body {
 }
 
 .status-pill.safe {
-    background: #35b741;
+    background: #28a745;
 }
 
 .status-pill.low {
-    background: #c80000;
+    background: #d39e00;
+}
+
+.status-pill.empty {
+    background: #dc3545;
 }
 
 .report-filter-layout {

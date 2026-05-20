@@ -34,36 +34,90 @@ class OutgoingTransaction extends Model
     }
 
     public function create(array $data): bool
-    {
-        $productModel = new Product();
-        $product = $productModel->find((int) $data['id_barang']);
+{
+    $productModel = new Product();
+    $product = $productModel->find((int) $data['id_barang']);
 
-        if (!$product) {
-            throw new RuntimeException('Barang tidak ditemukan.');
-        }
-
-        $remaining = (int) $product['stok'] - (int) $data['jumlah'];
-        if ($remaining < 0) {
-            throw new RuntimeException('Stok tidak mencukupi untuk transaksi barang keluar.');
-        }
-
-        $this->db->beginTransaction();
-
-        try {
-            $stmt = $this->db->prepare(
-                'INSERT INTO outgoing_transactions (id_barang, jumlah, jenis, tanggal)
-                 VALUES (:id_barang, :jumlah, :jenis, :tanggal)'
-            );
-            $stmt->execute($data);
-
-            $productModel->updateStock((int) $data['id_barang'], $remaining);
-            $this->db->commit();
-            return true;
-        } catch (Throwable $exception) {
-            $this->db->rollBack();
-            throw $exception;
-        }
+    if (!$product) {
+        throw new RuntimeException('Barang tidak ditemukan.');
     }
+
+    $remaining = (int) $product['stok'] - (int) $data['jumlah'];
+
+    if ($remaining < 0) {
+        throw new RuntimeException('Stok tidak mencukupi untuk transaksi barang keluar.');
+    }
+
+    $this->db->beginTransaction();
+
+    try {
+
+        // CEK TRANSAKSI YANG SUDAH ADA
+        $checkStmt = $this->db->prepare(
+            'SELECT *
+             FROM outgoing_transactions
+             WHERE id_barang = :id_barang
+             AND tanggal = :tanggal
+             AND jenis = :jenis
+             LIMIT 1'
+        );
+
+        $checkStmt->execute([
+            'id_barang' => $data['id_barang'],
+            'tanggal' => $data['tanggal'],
+            'jenis' => $data['jenis']
+        ]);
+
+        $existingTransaction = $checkStmt->fetch();
+
+        // JIKA SUDAH ADA → UPDATE JUMLAH
+        if ($existingTransaction) {
+
+            $newJumlah =
+                (int) $existingTransaction['jumlah']
+                + (int) $data['jumlah'];
+
+            $updateStmt = $this->db->prepare(
+                'UPDATE outgoing_transactions
+                 SET jumlah = :jumlah
+                 WHERE id_keluar = :id_keluar'
+            );
+
+            $updateStmt->execute([
+                'jumlah' => $newJumlah,
+                'id_keluar' => $existingTransaction['id_keluar']
+            ]);
+
+        } else {
+
+            // JIKA BELUM ADA → INSERT BARU
+            $stmt = $this->db->prepare(
+                'INSERT INTO outgoing_transactions
+                (id_barang, jumlah, jenis, tanggal)
+                VALUES
+                (:id_barang, :jumlah, :jenis, :tanggal)'
+            );
+
+            $stmt->execute($data);
+        }
+
+        // UPDATE STOK
+        $productModel->updateStock(
+            (int) $data['id_barang'],
+            $remaining
+        );
+
+        $this->db->commit();
+
+        return true;
+
+    } catch (Throwable $exception) {
+
+        $this->db->rollBack();
+
+        throw $exception;
+    }
+}
 
     public function totalTransactions(): int
     {

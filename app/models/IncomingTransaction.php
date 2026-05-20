@@ -35,31 +35,80 @@ class IncomingTransaction extends Model
     }
 
     public function create(array $data): bool
-    {
-        $productModel = new Product();
-        $product = $productModel->find((int) $data['id_barang']);
+{
+    $productModel = new Product();
+    $product = $productModel->find((int) $data['id_barang']);
 
-        if (!$product) {
-            throw new RuntimeException('Barang tidak ditemukan.');
-        }
+    if (!$product) {
+        throw new RuntimeException('Barang tidak ditemukan.');
+    }
 
-        $this->db->beginTransaction();
+    $this->db->beginTransaction();
 
-        try {
+    try {
+
+        // CEK APAKAH BARANG DENGAN TANGGAL YANG SAMA SUDAH ADA
+        $checkStmt = $this->db->prepare(
+            'SELECT * FROM incoming_transactions
+             WHERE id_barang = :id_barang
+             AND tanggal = :tanggal
+             LIMIT 1'
+        );
+
+        $checkStmt->execute([
+            'id_barang' => $data['id_barang'],
+            'tanggal' => $data['tanggal']
+        ]);
+
+        $existingTransaction = $checkStmt->fetch();
+
+        // JIKA SUDAH ADA → UPDATE JUMLAH
+        if ($existingTransaction) {
+
+            $newJumlah =
+                (int) $existingTransaction['jumlah']
+                + (int) $data['jumlah'];
+
+            $updateStmt = $this->db->prepare(
+                'UPDATE incoming_transactions
+                 SET jumlah = :jumlah
+                 WHERE id_masuk = :id_masuk'
+            );
+
+            $updateStmt->execute([
+                'jumlah' => $newJumlah,
+                'id_masuk' => $existingTransaction['id_masuk']
+            ]);
+
+        } else {
+
+            // JIKA BELUM ADA → INSERT BARU
             $stmt = $this->db->prepare(
-                'INSERT INTO incoming_transactions (id_barang, jumlah, tanggal)
+                'INSERT INTO incoming_transactions
+                 (id_barang, jumlah, tanggal)
                  VALUES (:id_barang, :jumlah, :tanggal)'
             );
-            $stmt->execute($data);
 
-            $productModel->updateStock((int) $data['id_barang'], (int) $product['stok'] + (int) $data['jumlah']);
-            $this->db->commit();
-            return true;
-        } catch (Throwable $exception) {
-            $this->db->rollBack();
-            throw $exception;
+            $stmt->execute($data);
         }
+
+        // UPDATE STOK BARANG
+        $productModel->updateStock(
+            (int) $data['id_barang'],
+            (int) $product['stok'] + (int) $data['jumlah']
+        );
+
+        $this->db->commit();
+
+        return true;
+
+    } catch (Throwable $exception) {
+
+        $this->db->rollBack();
+
+        throw $exception;
     }
+}
 
     public function totalTransactions(): int
     {
